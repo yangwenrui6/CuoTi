@@ -2,6 +2,13 @@
 
 基于 PyQt6 和 SQLite 的桌面错题管理应用，支持间隔重复算法、OCR识别、数据导入导出等功能。
 
+## 📖 文档导航
+
+- **[⚡ 快速开始](QUICKSTART.md)** - 5分钟快速部署
+- **[📦 部署指南](DEPLOYMENT.md)** - 完整部署文档
+- **[👨‍💻 开发指南](docs/dev_setup.md)** - 开发环境搭建
+- **[📚 用户手册](docs/user_manual.md)** - 功能使用说明
+
 ## ✨ 功能特性
 
 - 📝 **错题录入** - 支持文字、图片，拖拽上传
@@ -29,55 +36,95 @@
 
 ## 🚀 快速开始
 
+> 💡 **提示**: 完整部署指南请查看 [DEPLOYMENT.md](DEPLOYMENT.md)
+
 ### 方法一：一键安装（推荐）
 
 **Windows:**
-```bash
+```cmd
+# 1. 克隆项目
+git clone https://github.com/yangwenrui6/CuoTi.git
+cd CuoTi\mistake_book
+
+# 2. 运行安装脚本
 install.bat
+
+# 3. 启动应用
+python run.py
 ```
 
 **macOS/Linux:**
 ```bash
+# 1. 克隆项目
+git clone https://github.com/yangwenrui6/CuoTi.git
+cd CuoTi/mistake_book
+
+# 2. 运行安装脚本
 chmod +x install.sh
 ./install.sh
+
+# 3. 启动应用
+python run.py
 ```
 
 ### 方法二：手动安装
 
-1. **安装依赖**
 ```bash
-pip install -r dependencies/requirements.txt
-```
+# 1. 创建虚拟环境（推荐）
+python -m venv venv
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
 
-2. **运行应用**
-```bash
+# 2. 安装依赖
+pip install -r dependencies/requirements.txt
+
+# 3. 运行应用
 python run.py
 ```
 
-### 验证安装
+### 启用OCR功能（可选）
 
-运行演示脚本（无需GUI依赖）：
 ```bash
-python demo.py
+# 安装OCR依赖
+pip install easyocr
+
+# 首次使用会自动下载模型（约200MB）
 ```
+
+详细说明见：[OCR使用指南](docs/OCR使用指南.md)
 
 ## 📋 系统要求
 
-- Python 3.9+
-- Windows / macOS / Linux
-- 依赖包：PyQt6, SQLAlchemy, platformdirs, Pillow, plyer
+- **Python**: 3.9 或更高版本
+- **操作系统**: Windows 10/11, macOS 10.14+, Linux (Ubuntu 20.04+)
+- **内存**: 最低 2GB RAM，推荐 4GB+
+- **磁盘空间**: 最低 500MB，推荐 2GB+（包含OCR模型）
 
-详细安装说明见 [INSTALL.md](INSTALL.md)
+核心依赖：PyQt6, SQLAlchemy, platformdirs, Pillow
+
+详细要求见：[部署指南](DEPLOYMENT.md#系统要求)
 
 ## 📚 文档
 
-### 快速入门
-- [安装指南](INSTALL.md) - 详细的安装步骤和问题排查
-- [用户手册](docs/user_manual.md) - 如何使用应用
-- [OCR使用指南](docs/OCR使用指南.md) - OCR功能快速入门 ⭐ 推荐
+### 部署文档
+- **[⚡ 快速开始](QUICKSTART.md)** - 5分钟快速部署 ⭐ 推荐
+- **[📦 部署指南](DEPLOYMENT.md)** - 完整部署文档
+- **[🔧 常见问题](DEPLOYMENT.md#常见问题)** - 问题排查
 
-### 最新更新
-- [更新日志](CHANGELOG.md) - 版本更新历史 ⭐ 新增
+### 用户文档
+- [用户手册](docs/user_manual.md) - 功能使用说明
+- [OCR使用指南](docs/OCR使用指南.md) - OCR功能详解
+- [GUI设计](docs/gui_design.md) - 界面设计说明
+
+### 开发文档
+- [开发指南](docs/dev_setup.md) - 开发环境搭建
+- [架构文档](docs/architecture.md) - 项目架构和设计原则
+- [项目结构](PROJECT_STRUCTURE.md) - 完整的目录结构说明
+- [数据库设计](docs/database_design.md) - 数据库表结构
+
+### 更新日志
+- [CHANGELOG](docs/CHANGELOG.md) - 版本更新记录
+- [最近更新](docs/recent_updates_summary.md) - 最新功能
 - [最近更新总结](docs/recent_updates_summary.md) - 最新功能和改进 ⭐ 推荐
 
 ### 设计文档
