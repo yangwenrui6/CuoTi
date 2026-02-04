@@ -448,14 +448,10 @@ class MainWindow(QMainWindow):
             )
             return
         
-        # 暂时显示提示信息
-        module_name = f"{subject} - {question_type}" if subject else "全部"
-        from PyQt6.QtWidgets import QMessageBox
-        QMessageBox.information(
-            self,
-            "复习功能",
-            f"准备复习：{module_name}\n共 {len(all_questions)} 道题目\n\n复习对话框开发中..."
-        )
+        # 创建新的复习对话框
+        from mistake_book.ui.dialogs.review_dialog_new import ReviewDialog
+        dialog = ReviewDialog(all_questions, self.review_service, self)
+        dialog.exec()
         
         # 复习完成后刷新当前视图(保持筛选状态)
         self.refresh_current_view()

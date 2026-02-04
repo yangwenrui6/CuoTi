@@ -71,12 +71,24 @@ python demo.py
 
 ## 📚 文档
 
+### 快速入门
 - [安装指南](INSTALL.md) - 详细的安装步骤和问题排查
 - [用户手册](docs/user_manual.md) - 如何使用应用
+- [OCR使用指南](docs/OCR使用指南.md) - OCR功能快速入门 ⭐ 推荐
+
+### 最新更新
+- [更新日志](CHANGELOG.md) - 版本更新历史 ⭐ 新增
+- [最近更新总结](docs/recent_updates_summary.md) - 最新功能和改进 ⭐ 推荐
+
+### 设计文档
 - [GUI设计](docs/gui_design.md) - 界面设计说明和交互流程
 - [架构文档](docs/architecture.md) - 项目架构和设计原则
 - [项目结构](PROJECT_STRUCTURE.md) - 完整的目录结构说明
+- [数据库设计](docs/database_design.md) - 数据库表结构和ER图
+
+### 开发文档
 - [开发指南](docs/dev_setup.md) - 开发环境搭建
+- [文档索引](docs/README.md) - 所有文档的完整索引
 
 ## 🎯 核心功能
 

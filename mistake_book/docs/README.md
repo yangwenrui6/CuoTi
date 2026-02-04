@@ -4,6 +4,15 @@
 
 ## 📖 文档列表
 
+### 🎯 最新更新
+
+**[recent_updates_summary.md](recent_updates_summary.md)** - ✅ 最近更新总结 ⭐ 推荐
+- UI优化改进（详情对话框、卡片、长文本滚动）
+- 复习功能重构（模块选择器、新复习对话框）
+- 项目结构整理
+- 技术要点总结
+- 后续改进建议
+
 ### 🏗️ 架构与设计
 
 1. **[architecture.md](architecture.md)** - 整体架构设计
@@ -233,15 +242,16 @@
 ## 🗺️ 文档导航
 
 ### 新手入门
-1. 先看 [README.md](../README.md) 了解项目
-2. 查看 [user_manual.md](user_manual.md) 学习使用
-3. 阅读 [gui_design.md](gui_design.md) 了解界面
-4. **✅ 想用OCR功能？** 查看 [OCR使用指南.md](OCR使用指南.md) ⭐ 最推荐
-5. **OCR详细教程？** 查看 [ocr_quick_start.md](ocr_quick_start.md)
-6. **遇到OCR问题？** 查看 [ocr_status_and_solutions.md](ocr_status_and_solutions.md)
-7. **了解延迟加载？** 查看 [ocr_lazy_loading.md](ocr_lazy_loading.md)
-8. **模型路径配置？** 查看 [move_models_to_other_drive.md](move_models_to_other_drive.md) 或 [移动模型到D盘说明.md](移动模型到D盘说明.md)
-9. **OCR功能总结？** 查看 [OCR功能总结.md](OCR功能总结.md)
+1. **✅ 最新更新？** 查看 [recent_updates_summary.md](recent_updates_summary.md) ⭐ 最推荐
+2. 先看 [README.md](../README.md) 了解项目
+3. 查看 [user_manual.md](user_manual.md) 学习使用
+4. 阅读 [gui_design.md](gui_design.md) 了解界面
+5. **✅ 想用OCR功能？** 查看 [OCR使用指南.md](OCR使用指南.md) ⭐ 最推荐
+6. **OCR详细教程？** 查看 [ocr_quick_start.md](ocr_quick_start.md)
+7. **遇到OCR问题？** 查看 [ocr_status_and_solutions.md](ocr_status_and_solutions.md)
+8. **了解延迟加载？** 查看 [ocr_lazy_loading.md](ocr_lazy_loading.md)
+9. **模型路径配置？** 查看 [move_models_to_other_drive.md](move_models_to_other_drive.md) 或 [移动模型到D盘说明.md](移动模型到D盘说明.md)
+10. **OCR功能总结？** 查看 [OCR功能总结.md](OCR功能总结.md)
 
 ### 开发者
 1. 阅读 [architecture.md](architecture.md) 理解架构
@@ -280,6 +290,7 @@
 ```
 docs/
 ├── README.md                              # 本文件 - 文档索引
+├── recent_updates_summary.md              # 最近更新总结 ⭐ 最推荐
 ├── architecture.md                        # 架构设计
 ├── backend_services.md                    # 后端服务
 ├── database_design.md                     # 数据库设计
@@ -371,4 +382,13 @@ docs/
   - ✅ OCR功能总结.md - OCR功能完整总结（所有功能汇总）
   - ✅ 移动模型到D盘说明.md - 移动模型操作说明（中文说明）
   - ocr_simplification.md - OCR引擎简化说明（只保留EasyOCR）
+- 2026-02-04 - 添加UI优化和复习功能重构文档
+  - ✅ detail_dialog_ui_improvement.md - 详情对话框UI优化
+  - ✅ editable_answer_in_detail.md - 详情对话框答案编辑功能
+  - ✅ main_page_card_ui_improvement.md - 主页面卡片UI优化
+  - ✅ card_fixed_height.md - 卡片固定高度优化
+  - ✅ review_refactoring.md - 复习功能重构总览
+  - ✅ review_module_selector.md - 复习模块选择器实现
+  - ✅ review_module_selector_fix.md - 复习模块选择器修复
+  - ✅ recent_updates_summary.md - 最近更新总结（汇总所有最新改进）
 - 完善用户手册和开发指南

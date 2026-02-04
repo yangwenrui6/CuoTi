@@ -48,14 +48,15 @@ mistake_book/                          # 项目根目录
 │       │   │   └── review_vm.py       # 复习视图模型
 │       │   ├── widgets/               # 自定义控件
 │       │   │   ├── __init__.py
-│       │   │   ├── question_card.py   # 错题卡片组件
+│       │   │   ├── question_card.py   # 错题卡片组件（固定高度180px）
 │       │   │   ├── tag_selector.py    # 标签选择器
 │       │   │   └── difficulty_slider.py # 难度滑块
 │       │   ├── dialogs/               # 对话框
 │       │   │   ├── __init__.py
 │       │   │   ├── add_dialog.py      # 添加错题对话框（支持拖拽和点击上传）
-│       │   │   ├── review_dialog.py   # 复习对话框
-│       │   │   ├── detail_dialog.py   # 查看错题详情对话框
+│       │   │   ├── review_module_selector.py # 复习模块选择对话框（选择科目和题型）
+│       │   │   ├── review_dialog_new.py # 新复习对话框（卡片式设计）
+│       │   │   ├── detail_dialog.py   # 查看错题详情对话框（可编辑答案）
 │       │   │   └── image_viewer.py    # 图片查看器对话框（查看完整图片）
 │       │   └── resources/             # 编译后资源（由脚本生成）
 │       │       ├── __init__.py
@@ -205,23 +206,40 @@ mistake_book/                          # 项目根目录
   - get_filter_options(): 获取筛选器选项
   - parse_filter_from_ui(): 解析UI筛选条件
   - get_statistics_summary(): 获取统计摘要
-- **ocr_engine.py**: OCR引擎适配器（PaddleOCR/Tesseract）
+- **ocr_engine.py**: OCR引擎适配器
+  - 支持EasyOCR（中英文混合识别）
+  - 异步加载模型，不阻塞UI
+  - 自定义模型路径（D:/EasyOCR）
+  - 后台线程初始化
 - **notification.py**: 系统通知服务
 - **cloud_sync.py**: 云同步接口（预留）
 
 ### 5. ui/ - 界面层（MVVM架构）
 - **main_window.py**: 主窗口控制器
+  - 三栏布局（导航树、筛选器、内容区）
+  - 工具栏（添加错题、开始复习）
+  - 状态栏（OCR状态、操作提示）
 - **viewmodels/**: ViewModel层（数据绑定）
   - question_vm.py: 错题列表视图模型
   - review_vm.py: 复习流程视图模型
 - **widgets/**: 自定义控件
-  - question_card.py: 错题卡片（带查看和删除按钮）
+  - question_card.py: 错题卡片（固定高度180px，统一大小）
   - tag_selector.py: 标签选择器
   - difficulty_slider.py: 难度滑块
 - **dialogs/**: 对话框
-  - add_dialog.py: 添加错题（调用QuestionService）
-  - review_dialog.py: 复习界面（调用ReviewService）
-  - detail_dialog.py: 查看错题详情（只读展示）
+  - add_dialog.py: 添加错题（支持拖拽图片、OCR识别）
+  - review_module_selector.py: 复习模块选择（科目+题型）
+  - review_dialog_new.py: 新复习对话框
+    - 卡片式设计
+    - 题目图片+内容
+    - 答案折叠区
+    - 掌握度按钮组（横向排列）
+    - 复习总结页面
+  - detail_dialog.py: 查看错题详情
+    - 可编辑题目内容、答案、解析
+    - 退出时提示保存修改
+    - 长文本滚动优化
+  - image_viewer.py: 图片查看器（查看完整图片）
 
 ### 6. utils/ - 通用工具
 - **logger.py**: 统一日志配置
@@ -259,46 +277,118 @@ mistake_book/                          # 项目根目录
 
 所有项目文档集中在 `docs/` 目录：
 
+### 架构与设计
 - **README.md**: 文档索引和导航
 - **architecture.md**: 整体架构设计说明
 - **backend_services.md**: 后端服务架构详解
 - **database_design.md**: 数据库表结构和ER图
 - **gui_design.md**: GUI界面设计规范
 - **integration.md**: 前后端集成流程
+- **core_layer_analysis.md**: Core层使用分析
+
+### 重构与优化
 - **refactoring_services.md**: 服务层重构记录
-- **view_detail_feature.md**: 查看错题详情功能
-- **delete_question_feature.md**: 删除错题功能
 - **ui_optimization.md**: UI层业务逻辑优化
 - **data_flow_fix.md**: 数据流修复记录
 - **ui_refresh_fix.md**: UI刷新问题修复
 - **database_cache_fix.md**: 数据库缓存问题修复
+
+### 错题管理功能
+- **view_detail_feature.md**: 查看错题详情功能
+- **delete_question_feature.md**: 删除错题功能
+- **detail_dialog_ui_improvement.md**: 详情对话框UI优化
+- **editable_answer_in_detail.md**: 详情对话框答案编辑功能
 - **card_click_interaction.md**: 卡片点击交互优化
+- **card_fixed_height.md**: 卡片固定高度优化
+- **main_page_card_ui_improvement.md**: 主页面卡片UI优化
 - **view_state_persistence.md**: 视图状态持久化
 - **navigation_selection_persistence.md**: 导航树选中状态持久化
 - **prevent_duplicate_save.md**: 防止重复保存
+
+### 复习功能
+- **review_refactoring.md**: 复习功能重构总览
+- **review_module_selector.md**: 复习模块选择器实现
+- **review_module_selector_fix.md**: 复习模块选择器修复
+
+### OCR功能
 - **ocr_implementation.md**: OCR功能完整实现
 - **ocr_simplification.md**: OCR引擎简化说明
-- **easyocr_pyqt6_fix.md**: EasyOCR与PyQt6 DLL冲突修复
-- **easyocr_dll_fix.md**: EasyOCR DLL错误修复
-- **chinese_path_fix.md**: 中文路径OCR识别修复
-- **auto_ocr_on_drop.md**: 拖拽图片自动OCR识别
-- **image_upload_and_preview.md**: 图片上传和预览功能
-- **image_loading_fix.md**: 图片加载中文路径修复
 - **ocr_lazy_loading.md**: OCR延迟加载优化
-- **move_models_to_other_drive.md**: 模型路径配置到其他盘符
 - **ocr_async_loading.md**: OCR异步加载优化
 - **ocr_status_notification.md**: OCR状态通知优化
-- **ocr_model_path_fix.md**: OCR模型路径修复
-- **ocr_recognition_fix.md**: OCR识别流程修复
 - **ocr_quick_start.md**: OCR功能快速入门
 - **ocr_status_and_solutions.md**: OCR状态诊断与解决方案
 - **OCR使用指南.md**: OCR使用快速指南（中文）
 - **OCR功能总结.md**: OCR功能完整总结（中文）
+
+### OCR问题修复
+- **easyocr_pyqt6_fix.md**: EasyOCR与PyQt6 DLL冲突修复
+- **easyocr_dll_fix.md**: EasyOCR DLL错误修复
+- **chinese_path_fix.md**: 中文路径OCR识别修复
+- **ocr_model_path_fix.md**: OCR模型路径修复
+- **ocr_recognition_fix.md**: OCR识别流程修复
+- **ocr_recognition_improvement.md**: OCR识别改进
+- **ocr_english_support_restored.md**: OCR英文支持恢复
+- **ocr_model_download_issue.md**: OCR模型下载问题
+- **ocr_ui_freeze_fix.md**: OCR UI冻结修复
+- **OCR未响应问题已解决.md**: OCR未响应问题已解决（中文）
+- **OCR模型下载问题已解决.md**: OCR模型下载问题已解决（中文）
+
+### 图片处理
+- **auto_ocr_on_drop.md**: 拖拽图片自动OCR识别
+- **image_upload_and_preview.md**: 图片上传和预览功能
+- **image_loading_fix.md**: 图片加载中文路径修复
+
+### 模型管理
+- **move_models_to_other_drive.md**: 模型路径配置到其他盘符
 - **移动模型到D盘说明.md**: 移动模型到D盘操作说明（中文）
+
+### 系统问题修复
+- **app_startup_freeze_fix.md**: 应用启动冻结修复
+- **qt_thread_safety_fix.md**: Qt线程安全问题修复
+- **pytorch_pin_memory_warning_fix.md**: PyTorch pin_memory警告修复
+- **应用启动未响应问题已解决.md**: 应用启动未响应问题已解决（中文）
+- **Qt线程安全问题已解决.md**: Qt线程安全问题已解决（中文）
+
+### 测试与工具
+- **test_organization.md**: 测试组织结构
+- **ocr_test_status.md**: OCR测试状态
+- **frontend_check_summary.md**: 前端检查总结
 - **tesseract_installation_guide.md**: Tesseract安装指南
-- **core_layer_analysis.md**: Core层使用分析
+
+### 用户文档
 - **dev_setup.md**: 开发环境搭建指南
 - **user_manual.md**: 用户使用手册
+
+## 🎯 最新功能特性
+
+### 复习功能（全新设计）
+1. **模块选择器**
+   - 左右分栏：科目列表（蓝色）+ 题型列表（绿色）
+   - 实时统计每个模块的题目数量
+   - 支持选择特定模块或全部复习
+   - 清晰的视觉反馈和提示
+
+2. **复习对话框**
+   - 简洁的卡片式设计
+   - 显示题目图片和内容
+   - 答案折叠区（初始隐藏）
+   - 掌握度按钮组（🔴生疏/🟡困难/🟢掌握/🔵熟练）
+   - 自动记录复习历史
+   - 完成后显示统计总结
+
+### UI优化
+1. **卡片固定高度**：所有错题卡片统一180px高度，视觉整齐
+2. **详情对话框可编辑**：可直接编辑题目、答案、解析，退出时提示保存
+3. **长文本滚动**：编辑框设置最大高度，超出部分自动滚动
+4. **字体和对比度优化**：增大字体、提高颜色对比度，改善可读性
+
+### OCR功能
+1. **异步加载**：后台初始化，不阻塞UI启动
+2. **中英文混合识别**：支持['ch_sim', 'en']
+3. **自定义模型路径**：D:/EasyOCR
+4. **拖拽自动识别**：拖拽图片到添加对话框自动OCR
+5. **线程安全**：所有UI操作在主线程执行
 
 ## 🎯 设计原则
 
