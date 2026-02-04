@@ -15,9 +15,10 @@ class ReviewModuleSelectorDialog(QDialog):
     # 信号：选择了模块后发出 (subject, question_type)
     module_selected = pyqtSignal(str, str)
     
-    def __init__(self, data_manager, parent=None):
+    def __init__(self, data_manager, review_service, parent=None):
         super().__init__(parent)
         self.data_manager = data_manager
+        self.review_service = review_service
         
         # 存储可用的科目和题型
         self.subjects: List[str] = []
@@ -27,6 +28,7 @@ class ReviewModuleSelectorDialog(QDialog):
         # 当前选择
         self.selected_subject: Optional[str] = None
         self.selected_question_type: Optional[str] = None
+        self.is_review_history: bool = False  # 是否选择了复习历史
         
         self.setWindowTitle("📚 选择复习模块")
         self.setMinimumSize(700, 500)
@@ -218,6 +220,26 @@ class ReviewModuleSelectorDialog(QDialog):
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         
+        # 查看历史按钮
+        history_btn = QPushButton("� 查看历史")
+        history_btn.setMinimumSize(120, 45)
+        history_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12pt;
+                font-weight: bold;
+                background-color: #e67e22;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+            }
+            QPushButton:hover {
+                background-color: #d35400;
+            }
+        """)
+        history_btn.clicked.connect(self.show_history)
+        button_layout.addWidget(history_btn)
+        
         # 全部复习按钮
         all_btn = QPushButton("📖 复习全部")
         all_btn.setMinimumSize(120, 45)
@@ -290,6 +312,7 @@ class ReviewModuleSelectorDialog(QDialog):
         subject = text.split(' (')[0]
         self.selected_subject = subject
         self.selected_question_type = None
+        self.is_review_history = False
         
         # 清空并启用题型列表
         self.type_list.clear()
@@ -304,6 +327,13 @@ class ReviewModuleSelectorDialog(QDialog):
         
         # 更新提示
         self.selection_label.setText(f"已选择科目：{subject}，请选择题型")
+        self.selection_label.setStyleSheet("""
+            font-size: 11pt;
+            color: #7f8c8d;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        """)
         self.start_btn.setEnabled(False)
     
     def on_type_selected(self, item: QListWidgetItem):
@@ -343,7 +373,6 @@ class ReviewModuleSelectorDialog(QDialog):
         
         # 关闭对话框
         self.accept()
-        self.accept()
     
     def on_review_all(self):
         """复习全部题目"""
@@ -368,3 +397,17 @@ class ReviewModuleSelectorDialog(QDialog):
             # 发出信号，使用空字符串表示全部
             self.module_selected.emit("", "")
             self.accept()
+    
+    def show_history(self):
+        """显示复习历史"""
+        from mistake_book.ui.dialogs.review_history_dialog import ReviewHistoryDialog
+        
+        dialog = ReviewHistoryDialog(self.review_service, self)
+        result = dialog.exec()
+        
+        # 如果用户选择了开始复习历史
+        if result == ReviewHistoryDialog.DialogCode.Accepted and hasattr(dialog, 'start_review_requested'):
+            if dialog.start_review_requested:
+                # 发出信号开始复习历史
+                self.module_selected.emit("REVIEW_HISTORY", "")
+                self.accept()

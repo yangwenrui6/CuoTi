@@ -409,7 +409,7 @@ class MainWindow(QMainWindow):
         # 先显示模块选择对话框
         from mistake_book.ui.dialogs.review_module_selector import ReviewModuleSelectorDialog
         
-        selector = ReviewModuleSelectorDialog(self.data_manager, self)
+        selector = ReviewModuleSelectorDialog(self.data_manager, self.review_service, self)
         
         # 连接信号
         selector.module_selected.connect(self.on_module_selected_for_review)
@@ -421,9 +421,42 @@ class MainWindow(QMainWindow):
         if result == 0:
             logger.info("用户取消了复习模块选择")
     
+    def delayed_start_review(self):
+        """延迟启动复习 - 确保当前对话框已关闭"""
+        from PyQt6.QtCore import QTimer
+        # 延迟100ms后打开模块选择器，确保复习对话框已完全关闭
+        QTimer.singleShot(100, self.start_review)
+    
     def on_module_selected_for_review(self, subject: str, question_type: str):
         """模块选择后开始复习"""
         logger.info(f"选择的模块：科目={subject}, 题型={question_type}")
+        
+        # 检查是否选择了复习历史
+        if subject == "REVIEW_HISTORY":
+            logger.info("选择了复习历史")
+            # 获取最近复习的30道题
+            recent_questions = self.review_service.get_recently_reviewed_questions(30)
+            logger.info(f"找到 {len(recent_questions)} 道最近复习的题目")
+            
+            if not recent_questions:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.information(
+                    self,
+                    "提示",
+                    "暂无复习历史"
+                )
+                return
+            
+            # 创建复习对话框
+            from mistake_book.ui.dialogs.review_dialog_new import ReviewDialog
+            dialog = ReviewDialog(recent_questions, self.review_service, self)
+            # 连接继续复习信号 - 使用lambda延迟调用
+            dialog.review_completed.connect(lambda: self.delayed_start_review())
+            dialog.exec()
+            
+            # 复习完成后刷新当前视图
+            self.refresh_current_view()
+            return
         
         # 构建筛选条件
         filters = {}
@@ -451,10 +484,10 @@ class MainWindow(QMainWindow):
         # 创建新的复习对话框
         from mistake_book.ui.dialogs.review_dialog_new import ReviewDialog
         dialog = ReviewDialog(all_questions, self.review_service, self)
+        # 连接继续复习信号 - 使用lambda延迟调用
+        dialog.review_completed.connect(lambda: self.delayed_start_review())
         dialog.exec()
         
-        # 复习完成后刷新当前视图(保持筛选状态)
-        self.refresh_current_view()
         # 复习完成后刷新当前视图(保持筛选状态)
         self.refresh_current_view()
     

@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QWidget, QScrollArea, QFrame
 )
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, pyqtSignal
 from PyQt6.QtGui import QPixmap, QFont
 from pathlib import Path
 from typing import List, Dict, Any
@@ -16,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 class ReviewDialog(QDialog):
     """复习对话框"""
+    
+    # 信号：复习完成，请求返回模块选择器
+    review_completed = pyqtSignal()
     
     def __init__(self, questions: List[Dict[str, Any]], review_service, parent=None):
         super().__init__(parent)
@@ -41,9 +44,12 @@ class ReviewDialog(QDialog):
         
         self.progress_label = QLabel()
         self.progress_label.setStyleSheet("""
-            font-size: 14pt;
+            font-size: 16pt;
             font-weight: bold;
             color: #2c3e50;
+            padding: 5px 10px;
+            background-color: #ecf0f1;
+            border-radius: 6px;
         """)
         top_layout.addWidget(self.progress_label)
         
@@ -361,27 +367,28 @@ class ReviewDialog(QDialog):
         
         logger.info(f"题目 {question_id} 掌握度评价: {result}")
         
+        # 先记录已复习的题目（无论保存是否成功）
+        self.reviewed_questions.append({
+            'question': question,
+            'result': result,
+            'updates': {}
+        })
+        
         # 调用服务更新题目状态
         success, message, updates = self.review_service.process_review_result(
             question_id, result
         )
         
         if success:
-            # 记录已复习的题目
-            self.reviewed_questions.append({
-                'question': question,
-                'result': result,
-                'updates': updates
-            })
-            
-            # 进入下一题
-            self.current_index += 1
-            self.load_question()
+            # 更新记录中的updates
+            self.reviewed_questions[-1]['updates'] = updates
+            logger.info(f"题目状态更新成功")
         else:
             logger.error(f"更新题目状态失败: {message}")
-            # 即使失败也继续下一题
-            self.current_index += 1
-            self.load_question()
+        
+        # 进入下一题
+        self.current_index += 1
+        self.load_question()
     
     def finish_review(self):
         """结束复习"""
@@ -460,10 +467,34 @@ class ReviewDialog(QDialog):
             stats_detail.setStyleSheet("font-size: 14pt; color: #34495e; line-height: 2.0;")
             summary_layout.addWidget(stats_detail)
         
-        # 关闭按钮
-        close_btn = QPushButton("关闭")
-        close_btn.setMinimumHeight(50)
-        close_btn.setStyleSheet("""
+        # 按钮区域
+        button_layout = QHBoxLayout()
+        button_layout.setSpacing(15)
+        
+        # 继续复习按钮
+        continue_btn = QPushButton("🔄 继续复习")
+        continue_btn.setMinimumHeight(50)
+        continue_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 14pt;
+                font-weight: bold;
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+            QPushButton:hover {
+                background-color: #229954;
+            }
+        """)
+        continue_btn.clicked.connect(self.on_continue_review)
+        button_layout.addWidget(continue_btn)
+        
+        # 返回主页按钮
+        home_btn = QPushButton("🏠 返回主页")
+        home_btn.setMinimumHeight(50)
+        home_btn.setStyleSheet("""
             QPushButton {
                 font-size: 14pt;
                 font-weight: bold;
@@ -477,10 +508,19 @@ class ReviewDialog(QDialog):
                 background-color: #2980b9;
             }
         """)
-        close_btn.clicked.connect(self.accept)
-        summary_layout.addWidget(close_btn)
+        home_btn.clicked.connect(self.accept)
+        button_layout.addWidget(home_btn)
+        
+        summary_layout.addLayout(button_layout)
         
         self.content_layout.addWidget(summary_frame)
         
         # 更新进度标签
         self.progress_label.setText("复习完成")
+    
+    def on_continue_review(self):
+        """继续复习 - 返回模块选择器"""
+        # 发出信号通知主窗口
+        self.review_completed.emit()
+        # 关闭当前对话框
+        self.accept()
