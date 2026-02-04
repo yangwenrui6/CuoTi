@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mistake-book"
+version = "1.0.0"
+description = "智能错题管理系统"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+dependencies = [
+    "PyQt6>=6.4.0",
+    "SQLAlchemy>=2.0.0",
+    "platformdirs>=3.0.0",
+    "Pillow>=10.0.0",
+    "plyer>=2.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "PyInstaller>=5.13.0",
+]
+
+[project.scripts]
+mistake-book = "mistake_book.main:main"
+
+[tool.black]
+line-length = 100
+target-version = ['py39']

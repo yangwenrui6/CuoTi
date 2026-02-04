@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 用户数据
+*.db
+*.sqlite
+*.sqlite3
+backups/
+logs/
+
+# 编译资源
+src/mistake_book/ui/resources/resources_rc.py
+src/mistake_book/ui/resources/ui_compiled/
+
+
+
+# 打包
+*.spec

@@ -1,0 +1,172 @@
+/* 亮色主题 - 完整样式 */
+
+/* ========== 全局样式 ========== */
+QMainWindow {
+    background-color: #f5f6fa;
+}
+
+QWidget {
+    font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+/* ========== 按钮样式 ========== */
+QPushButton {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+QPushButton:hover {
+    background-color: #2980b9;
+}
+
+QPushButton:pressed {
+    background-color: #21618c;
+}
+
+QPushButton:disabled {
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+}
+
+/* ========== 输入框样式 ========== */
+QLineEdit, QTextEdit {
+    background-color: white;
+    border: 2px solid #dcdde1;
+    border-radius: 6px;
+    padding: 8px;
+    selection-background-color: #3498db;
+}
+
+QLineEdit:focus, QTextEdit:focus {
+    border: 2px solid #3498db;
+}
+
+/* ========== 下拉框样式 ========== */
+QComboBox {
+    background-color: white;
+    border: 2px solid #dcdde1;
+    border-radius: 6px;
+    padding: 6px 10px;
+    min-width: 100px;
+}
+
+QComboBox:hover {
+    border: 2px solid #3498db;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 30px;
+}
+
+QComboBox::down-arrow {
+    image: url(down_arrow.png);
+    width: 12px;
+    height: 12px;
+}
+
+/* ========== 树形控件样式 ========== */
+QTreeWidget {
+    background-color: white;
+    border: 1px solid #dcdde1;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+QTreeWidget::item {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+QTreeWidget::item:hover {
+    background-color: #ecf0f1;
+}
+
+QTreeWidget::item:selected {
+    background-color: #3498db;
+    color: white;
+}
+
+/* ========== 滚动条样式 ========== */
+QScrollBar:vertical {
+    background-color: #ecf0f1;
+    width: 12px;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #bdc3c7;
+    border-radius: 6px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #95a5a6;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* ========== 分组框样式 ========== */
+QGroupBox {
+    background-color: white;
+    border: 2px solid #dcdde1;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding-top: 15px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5px 10px;
+    color: #2c3e50;
+}
+
+/* ========== 工具栏样式 ========== */
+QToolBar {
+    background-color: white;
+    border-bottom: 1px solid #dcdde1;
+    spacing: 5px;
+    padding: 5px;
+}
+
+QToolBar QToolButton {
+    background-color: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+QToolBar QToolButton:hover {
+    background-color: #ecf0f1;
+}
+
+/* ========== 状态栏样式 ========== */
+QStatusBar {
+    background-color: white;
+    border-top: 1px solid #dcdde1;
+    color: #7f8c8d;
+}
+
+/* ========== 标签样式 ========== */
+QLabel {
+    color: #2c3e50;
+}
+
+/* ========== 分割器样式 ========== */
+QSplitter::handle {
+    background-color: #dcdde1;
+    width: 2px;
+}
+
+QSplitter::handle:hover {
+    background-color: #3498db;
+}
