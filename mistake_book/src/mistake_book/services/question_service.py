@@ -6,7 +6,10 @@ from mistake_book.core.data_manager import DataManager
 from mistake_book.services.ocr_engine import OCREngine
 from mistake_book.utils.validators import validate_question
 from mistake_book.utils.image_processor import ImageProcessor
+from mistake_book.config.paths import get_app_paths
 import logging
+import shutil
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +28,63 @@ class QuestionService:
         self.data_manager = data_manager
         self.ocr_engine = ocr_engine
         self.image_processor = ImageProcessor()
+        self.app_paths = get_app_paths()
+    
+    def _copy_image_to_storage(self, source_path: str) -> Optional[str]:
+        """
+        将图片复制到应用的图片存储目录
+        
+        Args:
+            source_path: 源图片路径
+        
+        Returns:
+            存储后的相对路径，失败返回None
+        """
+        try:
+            source = Path(source_path)
+            if not source.exists():
+                logger.error(f"源图片不存在: {source_path}")
+                return None
+            
+            # 生成唯一的文件名：时间戳_原文件名
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            new_filename = f"{timestamp}_{source.name}"
+            
+            # 目标路径
+            dest_path = self.app_paths.images_dir / new_filename
+            
+            # 复制文件
+            shutil.copy2(source, dest_path)
+            logger.info(f"图片已复制到: {dest_path}")
+            
+            # 返回相对于images_dir的文件名（便于数据库存储）
+            return new_filename
+            
+        except Exception as e:
+            logger.error(f"复制图片失败: {e}")
+            return None
+    
+    def get_image_full_path(self, relative_path: Optional[str]) -> Optional[Path]:
+        """
+        根据相对路径获取图片的完整路径
+        
+        Args:
+            relative_path: 相对路径（文件名）
+        
+        Returns:
+            完整路径，如果不存在返回None
+        """
+        if not relative_path:
+            return None
+        
+        # 如果是绝对路径（兼容旧数据）
+        path = Path(relative_path)
+        if path.is_absolute():
+            return path if path.exists() else None
+        
+        # 相对路径，拼接images_dir
+        full_path = self.app_paths.images_dir / relative_path
+        return full_path if full_path.exists() else None
     
     def create_question(self, question_data: Dict[str, Any]) -> tuple[bool, str, Optional[int]]:
         """
@@ -42,6 +102,17 @@ class QuestionService:
             return False, error_msg, None
         
         try:
+            # 处理图片：如果有图片路径，复制到专门的文件夹
+            if question_data.get("image_path"):
+                relative_path = self._copy_image_to_storage(question_data["image_path"])
+                if relative_path:
+                    # 保存相对路径到数据库
+                    question_data["image_path"] = relative_path
+                    logger.info(f"图片已保存，相对路径: {relative_path}")
+                else:
+                    # 复制失败，保留原路径（兼容性）
+                    logger.warning("图片复制失败，使用原路径")
+            
             # 保存到数据库
             question_id = self.data_manager.add_question(question_data)
             return True, f"错题添加成功！题目ID: {question_id}", question_id

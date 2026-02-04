@@ -39,6 +39,13 @@ class AppPaths:
         backup = self.data_dir / "backups"
         backup.mkdir(exist_ok=True)
         return backup
+    
+    @property
+    def images_dir(self) -> Path:
+        """题目图片存储目录"""
+        images = self.data_dir / "images"
+        images.mkdir(exist_ok=True)
+        return images
 
 
 def get_app_paths() -> AppPaths:

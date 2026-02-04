@@ -16,10 +16,11 @@ class QuestionDetailDialog(QDialog):
     # 信号：当答案被修改时发出
     answer_updated = pyqtSignal(int, dict)  # question_id, updates
     
-    def __init__(self, question_data: Dict[str, Any], parent=None):
+    def __init__(self, question_data: Dict[str, Any], question_service=None, parent=None):
         super().__init__(parent)
         self.question_data = question_data
         self.original_data = question_data.copy()  # 保存原始数据用于比较
+        self.question_service = question_service  # 用于获取图片完整路径
         
         # 存储可编辑控件的引用
         self.content_edit: Optional[QTextEdit] = None
@@ -294,20 +295,49 @@ class QuestionDetailDialog(QDialog):
     
     def add_image_section(self, layout):
         """添加图片（如果有）"""
-        image_path = self.question_data.get('image_path')
-        if image_path and Path(image_path).exists():
+        image_path_str = self.question_data.get('image_path')
+        if not image_path_str:
+            return
+        
+        # 获取完整路径
+        if self.question_service:
+            full_path = self.question_service.get_image_full_path(image_path_str)
+        else:
+            # 兼容旧代码，直接使用路径
+            full_path = Path(image_path_str) if Path(image_path_str).exists() else None
+        
+        if full_path and full_path.exists():
             group = QGroupBox("🖼️ 题目图片")
             group_layout = QVBoxLayout()
             
-            image_label = QLabel()
-            pixmap = QPixmap(image_path)
-            scaled = pixmap.scaled(700, 400, Qt.AspectRatioMode.KeepAspectRatio)
-            image_label.setPixmap(scaled)
-            image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            group_layout.addWidget(image_label)
-            
-            group.setLayout(group_layout)
-            layout.addWidget(group)
+            # 使用PIL加载图片，避免中文路径问题
+            try:
+                from PIL import Image
+                import numpy as np
+                from PyQt6.QtGui import QImage
+                
+                pil_image = Image.open(full_path)
+                if pil_image.mode != 'RGB':
+                    pil_image = pil_image.convert('RGB')
+                
+                img_array = np.array(pil_image)
+                height, width, channel = img_array.shape
+                bytes_per_line = 3 * width
+                q_image = QImage(img_array.data, width, height, bytes_per_line, QImage.Format.Format_RGB888)
+                pixmap = QPixmap.fromImage(q_image)
+                
+                image_label = QLabel()
+                scaled = pixmap.scaled(700, 400, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                image_label.setPixmap(scaled)
+                image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                group_layout.addWidget(image_label)
+                
+                group.setLayout(group_layout)
+                layout.addWidget(group)
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"加载图片失败: {e}")
     
     def add_buttons(self, layout):
         """添加底部按钮"""

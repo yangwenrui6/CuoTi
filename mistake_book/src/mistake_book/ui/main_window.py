@@ -524,7 +524,7 @@ class MainWindow(QMainWindow):
         if success and detail:
             # 显示详情对话框
             from mistake_book.ui.dialogs.detail_dialog import QuestionDetailDialog
-            dialog = QuestionDetailDialog(detail, self)
+            dialog = QuestionDetailDialog(detail, self.question_service, self)
             
             # 连接答案更新信号
             dialog.answer_updated.connect(self.on_answer_updated)
