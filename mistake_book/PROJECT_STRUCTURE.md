@@ -39,29 +39,47 @@ mistake_book/                          # 项目根目录
 │       │   ├── notification.py        # 系统通知（复习提醒）
 │       │   └── cloud_sync.py          # 云同步抽象（预留接口）
 │       │
-│       ├── ui/                        # 界面层（严格遵循MVVM）
+│       ├── ui/                        # 界面层（组件化架构）
 │       │   ├── __init__.py
-│       │   ├── main_window.py         # 主窗口Controller
-│       │   ├── viewmodels/            # ViewModel层（数据绑定核心）
+│       │   ├── components/            # 可复用UI组件
 │       │   │   ├── __init__.py
-│       │   │   ├── question_vm.py     # 错题视图模型
-│       │   │   └── review_vm.py       # 复习视图模型
-│       │   ├── widgets/               # 自定义控件
+│       │   │   ├── image_uploader.py  # 图片上传组件（拖拽+点击）
+│       │   │   ├── ocr_panel.py       # OCR识别面板
+│       │   │   ├── question_form.py   # 题目表单组件
+│       │   │   ├── filter_panel.py    # 筛选面板组件
+│       │   │   ├── statistics_panel.py # 统计面板组件
+│       │   │   └── navigation_tree.py # 导航树组件
+│       │   ├── dialogs/               # 对话框（Dialog-Controller分离）
 │       │   │   ├── __init__.py
-│       │   │   ├── question_card.py   # 错题卡片组件（固定高度180px）
-│       │   │   ├── tag_selector.py    # 标签选择器
-│       │   │   └── difficulty_slider.py # 难度滑块
-│       │   ├── dialogs/               # 对话框
+│       │   │   ├── add_question/      # 添加错题对话框
+│       │   │   │   ├── __init__.py
+│       │   │   │   ├── dialog.py      # UI组装器
+│       │   │   │   └── controller.py  # 业务逻辑控制器
+│       │   │   ├── detail/            # 详情对话框
+│       │   │   │   ├── __init__.py
+│       │   │   │   ├── dialog.py      # UI组装器
+│       │   │   │   └── controller.py  # 业务逻辑控制器
+│       │   │   ├── review/            # 复习对话框
+│       │   │   │   ├── __init__.py
+│       │   │   │   ├── dialog.py      # UI组装器
+│       │   │   │   └── controller.py  # 业务逻辑控制器
+│       │   │   ├── review_module_selector.py # 复习模块选择器
+│       │   │   └── review_history_dialog.py  # 复习历史对话框
+│       │   ├── main_window/           # 主窗口（MVC模式）
 │       │   │   ├── __init__.py
-│       │   │   ├── add_dialog.py      # 添加错题对话框（支持拖拽和点击上传）
-│       │   │   ├── review_module_selector.py # 复习模块选择对话框（选择科目和题型）
-│       │   │   ├── review_dialog_new.py # 新复习对话框（卡片式设计）
-│       │   │   ├── detail_dialog.py   # 查看错题详情对话框（可编辑答案）
-│       │   │   └── image_viewer.py    # 图片查看器对话框（查看完整图片）
-│       │   └── resources/             # 编译后资源（由脚本生成）
+│       │   │   ├── window.py          # 主窗口UI组装器
+│       │   │   ├── controller.py      # 主窗口控制器
+│       │   │   └── panels.py          # 面板工厂
+│       │   ├── factories/             # 工厂模式
+│       │   │   ├── __init__.py
+│       │   │   └── dialog_factory.py  # 对话框工厂（依赖注入）
+│       │   ├── events/                # 事件总线
+│       │   │   ├── __init__.py
+│       │   │   ├── event_bus.py       # 事件总线实现
+│       │   │   └── events.py          # 事件类型定义
+│       │   └── widgets/               # 自定义控件
 │       │       ├── __init__.py
-│       │       ├── resources_rc.py    # pyrcc6编译的.qrc
-│       │       └── ui_compiled/       # pyuic6编译的.ui → .py
+│       │       └── question_card.py   # 错题卡片组件（固定高度180px）
 │       │
 │       └── utils/                     # 通用工具
 │           ├── __init__.py
@@ -137,17 +155,35 @@ mistake_book/                          # 项目根目录
 │   └── pyproject.toml                # 项目构建配置
 │
 ├── tests/                            # 测试文件
+│   ├── test_ui/                      # UI层测试（重构后）
+│   │   ├── __init__.py
+│   │   ├── components/               # 组件测试
+│   │   │   ├── test_image_uploader.py
+│   │   │   ├── test_ocr_panel.py
+│   │   │   ├── test_question_form.py
+│   │   │   ├── test_filter_panel.py
+│   │   │   ├── test_statistics_panel.py
+│   │   │   └── test_navigation_tree.py
+│   │   ├── dialogs/                  # 对话框测试
+│   │   │   ├── test_add_question_controller.py
+│   │   │   ├── test_add_question_dialog_integration.py
+│   │   │   ├── test_detail_controller.py
+│   │   │   ├── test_detail_dialog_integration.py
+│   │   │   ├── test_review_controller.py
+│   │   │   └── test_review_dialog_integration.py
+│   │   ├── main_window/              # 主窗口测试
+│   │   │   ├── test_controller.py
+│   │   │   ├── test_panels.py
+│   │   │   └── test_window_integration.py
+│   │   ├── events/                   # 事件总线测试
+│   │   │   └── test_event_bus.py
+│   │   └── factories/                # 工厂测试
+│   │       └── test_dialog_factory.py
 │   ├── test_services/                # 服务层测试（OCR相关）
 │   │   ├── __init__.py
-│   │   ├── test_ocr_simple.py        # OCR基础功能测试
-│   │   ├── test_ocr_complete.py      # OCR完整流程测试
-│   │   ├── test_ocr_thread.py        # OCR后台线程测试
-│   │   ├── test_config_check.py      # OCR配置检查
+│   │   ├── test_ocr_english_support.py
+│   │   ├── test_ocr_recognition_improved.py
 │   │   └── ...                       # 其他服务测试
-│   ├── test_ui/                      # UI层测试
-│   │   ├── __init__.py
-│   │   ├── test_add_dialog.py        # 添加错题对话框测试
-│   │   └── test_image_loading.py     # 图片加载测试
 │   ├── test_core/                    # 核心层测试
 │   │   └── __init__.py
 │   ├── test_database/                # 数据库层测试
@@ -214,32 +250,50 @@ mistake_book/                          # 项目根目录
 - **notification.py**: 系统通知服务
 - **cloud_sync.py**: 云同步接口（预留）
 
-### 5. ui/ - 界面层（MVVM架构）
-- **main_window.py**: 主窗口控制器
-  - 三栏布局（导航树、筛选器、内容区）
-  - 工具栏（添加错题、开始复习）
-  - 状态栏（OCR状态、操作提示）
-- **viewmodels/**: ViewModel层（数据绑定）
-  - question_vm.py: 错题列表视图模型
-  - review_vm.py: 复习流程视图模型
+### 5. ui/ - 界面层（组件化架构 + MVC模式）
+
+#### 架构模式
+- **组件化设计**: 可复用的UI组件（ImageUploader, OCRPanel, QuestionForm等）
+- **Dialog-Controller分离**: 对话框只负责UI组装，Controller处理业务逻辑
+- **工厂模式**: DialogFactory统一创建对话框，管理依赖注入
+- **事件总线**: EventBus实现组件间解耦通信
+
+#### 目录结构
+- **components/**: 可复用UI组件
+  - ImageUploader: 图片上传（拖拽+点击）
+  - OCRPanel: OCR识别面板
+  - QuestionForm: 题目表单
+  - FilterPanel: 筛选面板
+  - StatisticsPanel: 统计面板
+  - NavigationTree: 导航树
+
+- **dialogs/**: 对话框（Dialog-Controller分离）
+  - add_question/: 添加错题对话框
+    - dialog.py: UI组装器（使用组件）
+    - controller.py: 业务逻辑（调用Service）
+  - detail/: 详情对话框
+    - dialog.py: UI组装器
+    - controller.py: 业务逻辑
+  - review/: 复习对话框
+    - dialog.py: UI组装器
+    - controller.py: 业务逻辑
+  - review_module_selector.py: 复习模块选择器
+  - review_history_dialog.py: 复习历史对话框
+
+- **main_window/**: 主窗口（MVC模式）
+  - window.py: 主窗口UI组装器
+  - controller.py: 主窗口控制器
+  - panels.py: 面板工厂（创建导航、卡片、筛选面板）
+
+- **factories/**: 工厂模式
+  - dialog_factory.py: 对话框工厂（依赖注入）
+
+- **events/**: 事件总线
+  - event_bus.py: 事件总线实现（发布-订阅模式）
+  - events.py: 事件类型定义（QuestionAddedEvent等）
+
 - **widgets/**: 自定义控件
-  - question_card.py: 错题卡片（固定高度180px，统一大小）
-  - tag_selector.py: 标签选择器
-  - difficulty_slider.py: 难度滑块
-- **dialogs/**: 对话框
-  - add_dialog.py: 添加错题（支持拖拽图片、OCR识别）
-  - review_module_selector.py: 复习模块选择（科目+题型）
-  - review_dialog_new.py: 新复习对话框
-    - 卡片式设计
-    - 题目图片+内容
-    - 答案折叠区
-    - 掌握度按钮组（横向排列）
-    - 复习总结页面
-  - detail_dialog.py: 查看错题详情
-    - 可编辑题目内容、答案、解析
-    - 退出时提示保存修改
-    - 长文本滚动优化
-  - image_viewer.py: 图片查看器（查看完整图片）
+  - question_card.py: 错题卡片（固定高度180px）
 
 ### 6. utils/ - 通用工具
 - **logger.py**: 统一日志配置
@@ -362,11 +416,34 @@ mistake_book/                          # 项目根目录
 
 ## 🎯 最新功能特性
 
+### UI层重构（2026年2月）
+1. **组件化架构**
+   - 6个可复用UI组件（ImageUploader, OCRPanel, QuestionForm等）
+   - Dialog-Controller分离，业务逻辑与UI解耦
+   - 所有组件可独立实例化和测试
+
+2. **工厂模式 + 依赖注入**
+   - DialogFactory统一创建对话框
+   - 自动注入服务依赖（QuestionService, ReviewService等）
+   - 简化对话框创建流程
+
+3. **事件总线**
+   - EventBus实现发布-订阅模式
+   - 组件间解耦通信
+   - 支持QuestionAdded, QuestionUpdated, QuestionDeleted等事件
+
+4. **测试覆盖**
+   - 组件单元测试（11个测试文件）
+   - Controller单元测试（3个测试文件）
+   - 集成测试（3个测试文件）
+   - EventBus和DialogFactory测试
+
 ### 复习功能（全新设计）
 1. **模块选择器**
    - 左右分栏：科目列表（蓝色）+ 题型列表（绿色）
    - 实时统计每个模块的题目数量
    - 支持选择特定模块或全部复习
+   - 新增"复习历史"功能（最近30题）
    - 清晰的视觉反馈和提示
 
 2. **复习对话框**
@@ -376,6 +453,13 @@ mistake_book/                          # 项目根目录
    - 掌握度按钮组（🔴生疏/🟡困难/🟢掌握/🔵熟练）
    - 自动记录复习历史
    - 完成后显示统计总结
+   - 支持"继续复习"（重新打开模块选择器）
+
+3. **复习历史**
+   - 查看最近30次复习记录
+   - 显示复习时间、科目、题型、掌握度
+   - 支持直接复习历史题目
+   - 智能去重（同一题目只保留最近一次）
 
 ### UI优化
 1. **卡片固定高度**：所有错题卡片统一180px高度，视觉整齐
@@ -392,12 +476,14 @@ mistake_book/                          # 项目根目录
 
 ## 🎯 设计原则
 
-### 分层架构
+### 分层架构（UI重构后）
 ```
 ┌─────────────────────────────────┐
-│      UI Layer (PyQt6)           │  界面层（Dialogs/Widgets）
+│   UI Layer (Components)         │  组件层（可复用UI组件）
 ├─────────────────────────────────┤
-│   ViewModel Layer (MVVM)        │  视图模型层（数据绑定）
+│   Dialog/Controller Layer       │  对话框层（UI组装 + 业务控制）
+├─────────────────────────────────┤
+│   Factory + EventBus            │  工厂模式 + 事件总线
 ├─────────────────────────────────┤
 │   Service Layer                 │  服务层（业务逻辑封装）
 ├─────────────────────────────────┤
@@ -409,24 +495,35 @@ mistake_book/                          # 项目根目录
 
 ### 数据流向
 ```
-UI Dialog → Service → Core/DataManager → Database
-    ↓          ↓           ↓                ↓
- 用户交互   业务封装    业务逻辑         数据持久化
+UI Component → Dialog → Controller → Service → Core/DataManager → Database
+     ↓           ↓          ↓            ↓           ↓                ↓
+  用户交互    UI组装    业务控制    业务封装    业务逻辑         数据持久化
 ```
+
+### UI层架构特点
+1. **组件化**: 可复用的UI组件（ImageUploader, OCRPanel等）
+2. **Dialog-Controller分离**: Dialog只负责UI，Controller处理业务
+3. **依赖注入**: 通过DialogFactory注入服务依赖
+4. **事件驱动**: EventBus实现组件间解耦通信
+5. **工厂模式**: 统一创建对话框，管理依赖关系
 
 ### 关键特性
 1. **业务逻辑与UI分离**: core/目录完全独立，可单独测试
 2. **服务层封装**: UI通过Service层访问业务逻辑，降低耦合
-3. **MVVM模式**: ViewModel负责数据绑定，View只负责显示
+3. **组件可复用**: UI组件可在多个对话框中复用
 4. **依赖注入**: 通过构造函数注入依赖，便于测试和维护
 5. **接口抽象**: OCR、云同步等使用抽象基类，易于扩展
+6. **事件解耦**: 使用EventBus实现组件间通信，避免直接依赖
 
 ### 最佳实践
-- ✅ UI层只负责展示和用户交互，不包含业务逻辑
-- ✅ 业务逻辑放在Service层或Core层
+- ✅ UI组件只负责展示和用户交互，不包含业务逻辑
+- ✅ Controller处理业务逻辑，调用Service层
+- ✅ Dialog只负责UI组装，连接信号到Controller
 - ✅ 使用依赖注入传递服务实例
+- ✅ 使用EventBus实现组件间通信
 - ✅ 异常处理在Service层统一处理
 - ✅ 数据验证在Service层完成
+- ✅ 组件保持独立，可单独测试
 
 ## 🚀 快速开始
 

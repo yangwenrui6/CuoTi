@@ -337,9 +337,24 @@ mistake_book/
 │   ├── core/             # 业务逻辑
 │   ├── database/         # 数据库层
 │   ├── services/         # 服务层
-│   ├── ui/               # 界面层
+│   ├── ui/               # 界面层（UI重构后）
+│   │   ├── components/   # 可复用UI组件
+│   │   ├── dialogs/      # 对话框（Dialog-Controller分离）
+│   │   ├── main_window/  # 主窗口（MVC模式）
+│   │   ├── factories/    # 工厂模式
+│   │   ├── events/       # 事件总线
+│   │   └── widgets/      # 自定义控件
 │   └── utils/            # 工具函数
-├── tests/                # 测试文件
+├── tests/                # 测试文件（UI重构后新增大量测试）
+│   ├── test_ui/          # UI层测试
+│   │   ├── components/   # 组件测试
+│   │   ├── dialogs/      # 对话框测试
+│   │   ├── main_window/  # 主窗口测试
+│   │   ├── events/       # 事件总线测试
+│   │   └── factories/    # 工厂测试
+│   ├── test_services/    # 服务层测试
+│   ├── test_core/        # 核心层测试
+│   └── test_database/    # 数据库层测试
 ├── docs/                 # 文档
 ├── resources/            # 资源文件
 ├── scripts/              # 辅助脚本
@@ -370,11 +385,29 @@ python scripts/build_exe.py
 # 运行所有测试
 pytest tests/
 
-# 运行特定测试
+# 运行UI层测试（UI重构后新增）
+pytest tests/test_ui/
+
+# 运行组件测试
+pytest tests/test_ui/components/
+
+# 运行对话框测试
+pytest tests/test_ui/dialogs/
+
+# 运行主窗口测试
+pytest tests/test_ui/main_window/
+
+# 运行事件总线测试
+pytest tests/test_ui/events/
+
+# 运行服务层测试
 pytest tests/test_services/
 
 # 生成覆盖率报告
 pytest --cov=src tests/
+
+# 生成HTML覆盖率报告
+pytest --cov=src --cov-report=html tests/
 ```
 
 ### 代码规范
@@ -429,4 +462,14 @@ pytest --cov=src tests/
 
 ---
 
-**最后更新**: 2026年2月4日
+**最后更新**: 2026年2月9日（UI重构后更新）
+
+**版本**: v2.0.0 - UI重构版本
+
+**主要更新**:
+- ✅ UI层组件化架构
+- ✅ Dialog-Controller分离
+- ✅ 工厂模式 + 依赖注入
+- ✅ 事件总线实现
+- ✅ 复习历史功能
+- ✅ 完整的测试覆盖
